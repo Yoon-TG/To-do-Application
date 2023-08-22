@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,9 +53,8 @@ public class TodoController {
 //		return ResponseEntity.ok().body(response);
 //	}
 
-	//PostMapping
 	@PostMapping
-	public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto){
+	public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto){ //create()
 		try {
 			String tempoId = "temporary-user";
 			
@@ -68,10 +68,10 @@ public class TodoController {
 			List<TodoDTO> dtos 
 			= entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 			
-			ResponseDTO<TodoDTO> reponse 
+			ResponseDTO<TodoDTO> response 
 			= ResponseDTO.<TodoDTO>builder().data(dtos).build();
 			
-			return ResponseEntity.ok().body(reponse);			
+			return ResponseEntity.ok().body(response);			
 		} catch (Exception e) {
 			// TODO: handle exception
 			String error = e.getMessage();
@@ -82,6 +82,19 @@ public class TodoController {
 			return ResponseEntity.badRequest().body(response);			
 		}
 		
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> retrieveTodoList(){ //retrieve()
+		String tempoUserId = "temporary-user";
+		
+		List<TodoEntity> entities = service.retrieve(tempoUserId); //todo 리스트 가져옴(해당 아이디의)
+		
+		List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList()); //스트림 이용, 리턴된 엔티티 리스트를 todoDTO 리스트로 변환
+		
+		ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build(); //위의 todoDTO 리스트로 ResponseDTO 초기화
+		
+		return ResponseEntity.ok().body(response); //responseDTO 리턴
 	}
 
 }

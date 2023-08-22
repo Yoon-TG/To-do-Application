@@ -37,7 +37,7 @@ public class TodoService {
 		return savedEntity.getTitle();		
 	}
 
-	//create() 메서드 구현
+	//create() 메서드 - 새로운 todo 아이템 생성 구현
 	public List<TodoEntity> create(final TodoEntity entity){
 		//validation
 		validate(entity);
@@ -50,7 +50,7 @@ public class TodoService {
 		return repository.findByUserId(entity.getUserId());
 	}
 	
-	//retrieve() 메서드 구현
+	//retrieve() - todo 아이템 검색 메서드 구현
 	public List<TodoEntity> retrieve(final String userId){
 		return repository.findByUserId(userId);
 	}
