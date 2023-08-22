@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.DeleteExchange;
 
 import com.example.todo.dto.ResponseDTO;
 import com.example.todo.dto.TestRequestBodyDTO;
@@ -115,6 +117,31 @@ public class TodoController {
 		ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build(); //위의 todoDTO 리스트로 ResponseDTO 초기화
 		
 		return ResponseEntity.ok().body(response); //responseDTO 리턴
+	}
+	
+	@DeleteMapping
+	public ResponseEntity<?> deleteTodo(@RequestBody TodoDTO dto){ //delete()
+		try {
+		String tempoUserId = "temporary-user";
+		
+		TodoEntity entity = TodoDTO.toEntity(dto); //dto > entity로 변환
+		
+		entity.setUserId(tempoUserId); //임시 사용자 아이디 설정		
+		
+		List<TodoEntity> entities = service.delete(entity); //서비스의 delete() 이용 - entity delete
+		
+		List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList()); //스트림 이용, 리턴된 엔티티 리스트를 todoDTO 리스트로 변환
+		
+		ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build(); //위의 todoDTO 리스트로 ResponseDTO 초기화
+		
+		return ResponseEntity.ok().body(response); //responseDTO 리턴
+		}catch (Exception e) { //예외발생 시 dto 대신 error에 메시지를 넣고 리턴
+			// TODO: handle exception
+			String error = e.getMessage();
+			
+			ResponseDTO<TodoDTO> response =  ResponseDTO.<TodoDTO>builder().error(error).build(); 
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 }
