@@ -25,6 +25,9 @@ import com.example.todo.dto.TodoDTO;
 import com.example.todo.model.TodoEntity;
 import com.example.todo.service.TodoService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("todo")
 public class TodoController {
@@ -32,30 +35,6 @@ public class TodoController {
 	@Autowired
 	private TodoService service;
 	
-//	//testTodo 메서드 작성
-//	@GetMapping("/testTodo")
-//	public ResponseEntity<?> testTodo(){
-//		List<String> list = new ArrayList<>();
-//		list.add("This is ResponseEntity Body");
-//
-//		ResponseDTO<String> response = ResponseDTO.<String>builder().data(list).build();
-//
-//		return ResponseEntity.badRequest().body(response);
-//	}
-
-//	//service 테스트용 메서드 작성
-//	@GetMapping("/testService")
-//	public ResponseEntity<?> testService(){
-//		String str = service.testService(); //테스트 서비스 사용
-//		
-//		List<String> list = new ArrayList<>();
-//		list.add(str);
-//		
-//		ResponseDTO<String> response = ResponseDTO.<String>builder().data(list).build();
-//		
-//		return ResponseEntity.ok().body(response);
-//	}
-
 	@PostMapping
 	public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto){ //create()
 		try {
