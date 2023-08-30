@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.todo.dto.ResponseDTO;
 import com.example.todo.dto.UserDTO;
 import com.example.todo.model.UserEntity;
+import com.example.todo.security.TokenProvider;
 import com.example.todo.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private TokenProvider tokenProvider;
 	
 	//요청에서 넘어온 UserDTO를 이용해 저장할 사용자 만들기
 	@PostMapping("/signup")
@@ -56,9 +60,12 @@ public class UserController {
 		UserEntity user = userService.getByCredentials(userDTO.getEmail(), userDTO.getPassword());
 		
 		if(user != null) { //userService의 메소드를 통해 얻은 user가 null이 아닌 경우 == 일치하는 회원정보가 있는 경우
+			final String token = tokenProvider.create(user); //토큰 생성
+			
 			final UserDTO responseUserDTO = UserDTO.builder()
 					.email(user.getEmail())
 					.id(user.getId())
+					.token(token) //토큰 추가
 					.build();
 			return ResponseEntity.ok().body(responseUserDTO); 
 		}else {
